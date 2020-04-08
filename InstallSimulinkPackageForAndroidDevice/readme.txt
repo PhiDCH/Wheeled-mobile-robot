@@ -1,0 +1,1 @@
+this pptx file show how to connect your smartphone with simulink matlab
