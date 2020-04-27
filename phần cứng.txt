@@ -1,0 +1,45 @@
+﻿-vđk: arduino hoặc bất cứ con nào có chân chuyên dụng
+ đọc encoder
+-động cơ DC 9v, có gắn sẵn encoder để đo vận tốc bánh
+-điều khiển động cơ dùng phương pháp băm xung, thông
+qua mạch cầu H
+-nguồn 3 pin 18650 loại 3.7v
+
+
+-module cảm biến IMU 6-DOF hoặc 10 hoặc 11-DOF giao 
+tiếp với vđk qua các chân IO, dùng ngắt truyền thông
+-module cảm biến GPS giao tiếp với Vđk qua chân IO, 
+dùng ngắt truyền thông
+
+%% các cảm biến này có thể gắn luôn vào vđk gốc cũng 
+được, nhưng sợ nó không đủ chân với cả mỗi lần đọc 
+cảm biến là một lần ngắt, sợ ngắt tần số cao thì vđk 
+nó không có đủ time để tính toán đk nên t recommend
+xử dụng thêm 1 vđk nữa để đọc riêng các cảm biến này, 
+sau đó tính toán vòng ngoài và chỉ truyền về giá trị
+đặt cho vận tốc ở hai bánh xe, vđk còn lại sẽ thực hiện
+đk vận tốc cho hai bánh. Giao tiếp 2 vđk có thể dùng 
+UART nối tiếp. 
+
+Phương án đk:
+vòng trong: đk vận tốc, đơn giản sử dụng PID
+-đầu vào: duty circle (PWM)
+-đầu ra: vận tốc của động cơ
+coi như không cần biết hàm truyền, chỉ ngồi dò tham số PID
+
+%% thường thì sẽ cấp đầu vào PWM duty circle để đk
+dòng qua động cơ, dòng này tỷ lệ thuận với momen trục
+động cơ. Như vậy thì sẽ có 3 vòng:
+1.duty circle đk dòng (vòng này rất nhanh vì dòng 
+điện quá độ rất nhanh) (PID)
+2.dòng (tức là momen đấy) đk vận tốc (PID)
+3.vận tốc là đầu vào đk vị trí (phi tuyến)
+
+Nhưng ở vòng 2 rất khó để viết đúng phương trình động
+lực học của hệ nên tạm thời t không đk dòng nữa mà đk
+vận tốc luôn. Còn nếu ô làm thiết kế thì giả sử có mô 
+hình đúng của hệ thì thêm vòng này vào. Nếu thêm vào 
+thì phải mua thêm cảm biến để đo dòng nữa.
+
+vòng ngoài: đk bám quỹ đạo, sử dụng backstepping, 
+sliding adaptive gì cũng được
